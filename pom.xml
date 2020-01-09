@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kendall.laine</groupId>
-    <artifactId>shorty</artifactId>
+    <artifactId>hash</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -52,6 +52,10 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
         </dependency>
     </dependencies>
 
