@@ -27,13 +27,14 @@ public class ShortLink {
         this.url = url;
         this.hash = hash;
         this.custom = custom;
+        this.visited = 0;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "ShortLink[url='%s', hash='%s', custom='%s', createdAt='%s']",
-                url, hash, custom, createdAt);
+                "ShortLink[url='%s', hash='%s', custom='%s', createdAt='%s', visited='%s']",
+                url, hash, custom, createdAt, visited);
     }
 
     public String getUrl() {

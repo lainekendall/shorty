@@ -32,7 +32,11 @@ public class ShortyController {
         List<ShortLink> shorty = repository.findByHash(hash);
         RedirectView redirectView = new RedirectView();
         if (!shorty.isEmpty()) {
-          redirectView.setUrl(shorty.get(0).getUrl());
+            ShortLink shortLink = shorty.get(0);
+            shortLink.setVisited(shortLink.getVisited() + 1);
+            repository.save(shortLink);
+            System.out.println(shortLink);
+            redirectView.setUrl(shortLink.getUrl());
         }
         return redirectView;
     }
@@ -45,7 +49,8 @@ public class ShortyController {
             shortLink = shortLinks.get(0);
         }
         repository.save(shortLink);
-        return "<a href=" + shortLink.getUrl() + " >" + createUrl(shortLink.getUrl()) + "</a>";
+        final String shortLinkUrl = createUrl(shortLink.getUrl());
+        return "<a href=" + shortLinkUrl + " >" + shortLinkUrl + "</a>";
     }
 
     @RequestMapping("/custom")
