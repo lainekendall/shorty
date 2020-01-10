@@ -58,6 +58,15 @@ public class ShortyController {
         return "Made a custom url!";
     }
 
+    @RequestMapping("/stats")
+    public String stats(@RequestParam(value = "hash") String hash) {
+        final List<ShortLink> shortLinks = repository.findByHash(hash);
+        if (shortLinks.isEmpty()) {
+            return "This short link hasn't been created yet";
+        }
+        return String.valueOf(shortLinks.get(0));
+    }
+
     private String createUrl(final String url) {
         final String hash = String.valueOf(url.hashCode()).replace("-", "");
         return "http://" + serverHost + ":" + serverPort + "/" + hash;
