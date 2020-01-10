@@ -1,4 +1,4 @@
-package hello;
+package shorty;
 
 import org.hibernate.annotations.CreationTimestamp;
 

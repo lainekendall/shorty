@@ -1,4 +1,4 @@
-package hello;
+package shorty;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @RestController
 public class ShortyController {
@@ -74,7 +77,16 @@ public class ShortyController {
         if (shortLinks.isEmpty()) {
             return "This short link hasn't been created yet";
         }
-        return String.valueOf(shortLinks.get(0));
+        ShortLink shortLink = shortLinks.get(0);
+        return shortLink + "\n and its been visited " + visitsPerDay(shortLink) + " times a day";
+    }
+
+    static long visitsPerDay(final ShortLink shortLink) {
+        long now = DAYS.between(shortLink.getCreatedAt(), LocalDateTime.now());
+        if (now == 0) {
+            return 0;
+        }
+        return shortLink.getVisited() / now;
     }
 
     private String createUrl(final String url) {

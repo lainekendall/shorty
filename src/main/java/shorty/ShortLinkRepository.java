@@ -1,4 +1,4 @@
-package hello;
+package shorty;
 
 import java.util.List;
 
