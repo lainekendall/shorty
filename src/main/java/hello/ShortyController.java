@@ -39,7 +39,11 @@ public class ShortyController {
 
     @RequestMapping("/create")
     public String create(@RequestParam(value = "url") String url) {
-        final ShortLink shortLink = new ShortLink(url, sanitizeHash(url));
+        final List<ShortLink> shortLinks = repository.findByUrl(url);
+        ShortLink shortLink = new ShortLink(url, sanitizeHash(url), null);
+        if (!shortLinks.isEmpty()) {
+            shortLink = shortLinks.get(0);
+        }
         repository.save(shortLink);
         return "<a href=" + shortLink.getUrl() + " >" + createUrl(shortLink.getUrl()) + "</a>";
     }
@@ -48,13 +52,14 @@ public class ShortyController {
     public String customLink(@RequestParam(value = "url") String url, @RequestParam(value = "custom") String customShorty) {
         List<ShortLink> shortLinks = repository.findByUrl(url);
         if (shortLinks.isEmpty()) {
-            repository.save(new ShortLink(url, Collections.singletonList(customShorty)));
+            repository.save(new ShortLink(url, null, Collections.singletonList(customShorty)));
             return "Made a custom url!";
         }
         final ShortLink shortLink = shortLinks.get(0);
         final List<String> custom = shortLink.getCustom();
         custom.add(customShorty);
-        repository.save(new ShortLink(shortLink.getUrl(), shortLink.getHash(), shortLink.getCustom()));
+        shortLink.setCustom(custom);
+        repository.save(shortLink);
         return "Made a custom url!";
     }
 
