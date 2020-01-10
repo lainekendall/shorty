@@ -1,6 +1,9 @@
 package hello;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.List;
 
 @Entity
 public class ShortLink {
@@ -8,13 +11,26 @@ public class ShortLink {
     @Id
     private String url;
     private String hash;
+    @ElementCollection
+    private List<String> custom;
 
     protected ShortLink() {
     }
 
-    public ShortLink(String url, String hash) {
+    public ShortLink(final String url, final String hash) {
         this.url = url;
         this.hash = hash;
+    }
+
+    public ShortLink(final String url, final String hash, final List<String> custom) {
+        this.url = url;
+        this.hash = hash;
+        this.custom = custom;
+    }
+
+    public ShortLink(final String url, final List<String> custom) {
+        this.url = url;
+        this.custom = custom;
     }
 
     @Override
@@ -30,5 +46,8 @@ public class ShortLink {
 
     public String getHash() {
         return hash;
+    }
+    public List<String> getCustom() {
+        return custom;
     }
 }

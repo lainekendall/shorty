@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -40,7 +41,21 @@ public class ShortyController {
     public String create(@RequestParam(value = "url") String url) {
         final ShortLink shortLink = new ShortLink(url, sanitizeHash(url));
         repository.save(shortLink);
-        return createUrl(shortLink.getUrl());
+        return "<a href=" + shortLink.getUrl() + " >" + createUrl(shortLink.getUrl()) + "</a>";
+    }
+
+    @RequestMapping("/custom")
+    public String customLink(@RequestParam(value = "url") String url, @RequestParam(value = "custom") String customShorty) {
+        List<ShortLink> shortLinks = repository.findByUrl(url);
+        if (shortLinks.isEmpty()) {
+            repository.save(new ShortLink(url, Collections.singletonList(customShorty)));
+            return "Made a custom url!";
+        }
+        final ShortLink shortLink = shortLinks.get(0);
+        final List<String> custom = shortLink.getCustom();
+        custom.add(customShorty);
+        repository.save(new ShortLink(shortLink.getUrl(), shortLink.getHash(), shortLink.getCustom()));
+        return "Made a custom url!";
     }
 
     private String createUrl(final String url) {
