@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>kendall.laine</groupId>
-    <artifactId>hash</artifactId>
+    <artifactId>shorty</artifactId>
     <version>0.1.0</version>
 
     <parent>
@@ -56,6 +56,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

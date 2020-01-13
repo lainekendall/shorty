@@ -4,8 +4,10 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -14,8 +16,8 @@ public class ShortLink {
     @Id
     private String url;
     private String hash;
-    @ElementCollection
-    private List<String> custom;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> custom = Collections.emptyList();
     @CreationTimestamp
     private LocalDateTime createdAt;
     private Integer visited;

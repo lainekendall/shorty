@@ -17,51 +17,102 @@
 package shorty;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
+
+@SpringBootTest
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@AutoConfigureDataJpa
+@AutoConfigureTestDatabase
+@AutoConfigureTestEntityManager
 public class ShortyControllerTest {
-	@Autowired
-	private TestEntityManager entityManager;
 
-	@Autowired
-	private ShortLinkRepository repository;
+    @Autowired
+    private TestEntityManager entityManager;
 
-	@Test
-	public void testFindByHash() {
-		final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptyList());
-		repository.save(shortLink);
-		List<ShortLink> shortLinks = repository.findByHash("123456789");
+    @Autowired
+    private ShortyController controller;
 
-		assertThat(shortLinks).extracting(ShortLink::getHash).containsOnly("123456789");
-		assertThat(shortLinks).extracting(ShortLink::getUrl).containsOnly("https://example.com");
-		assertThat(shortLinks).extracting(ShortLink::getVisited).containsOnly(0);
-		assertThat(shortLinks).extracting(ShortLink::getCreatedAt).isNotEmpty();
+    @Autowired
+    private ShortLinkRepository repository;
+    private static ShortLink SHORT_LINK = new ShortLink("url", "1234", Collections.emptyList());
 
-	}
+    @Before
+    public void setUp() {
+        repository.save(SHORT_LINK);
+    }
 
-	@Test
-	public void testVisitsPerDay() {
-		final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptyList());
-		shortLink.setCreatedAt(LocalDateTime.of(2020, 1, 5, 3, 37));
-		final long zeroVisits = ShortyController.visitsPerDay(shortLink);
-		assertThat(zeroVisits).isGreaterThanOrEqualTo(0L);
+    @Test
+    public void testAll() {
+        assertThat(controller.all()).extracting(ShortLink::getUrl).containsOnly("url");
+    }
 
-		shortLink.setVisited(19);
-		final long someVisits = ShortyController.visitsPerDay(shortLink);
-		assertThat(someVisits).isGreaterThanOrEqualTo(3L);
+    @Test
+    public void testRedirect() {
+        assertThat(controller.hashRedirect("1234")).extracting(RedirectView::getUrl).isEqualTo("url");
+    }
 
-	}
+    @Test
+    public void testRedirectNull() {
+        assertThat(controller.hashRedirect("notASavedHash")).extracting(RedirectView::getUrl).isNull();
+    }
 }
+//
+//@RunWith(SpringRunner.class)
+//@WebMvcTest(ShortyController.class)
+//public class ShortyControllerTest {
+//
+//    @Autowired private MockMvc mockMvc;
+//
+//
+////    @Autowired
+////    private TestEntityManager entityManager;
+//
+////    private ShortyController controller = new ShortyController();
+//
+//    @Autowired
+//    private ShortLinkRepository repository;
+//
+//    @Before
+//    public void setUp() {
+//    }
+//
+//    @Test
+//    public void testVisitsPerDay() {
+//        final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptyList());
+//        shortLink.setCreatedAt(LocalDateTime.of(2020, 1, 1, 3, 37));
+//        final long zeroVisits = ShortyController.visitsPerDay(shortLink);
+//        assertThat(zeroVisits).isGreaterThanOrEqualTo(0L);
+//
+//        shortLink.setVisited(19);
+//        final long someVisits = ShortyController.visitsPerDay(shortLink);
+//        assertThat(someVisits).isLessThanOrEqualTo(3L);
+//    }
+//
+//    @Test
+//    public void testAll() throws Exception {
+//        mockMvc.perform(get("/")).andReturn();
+//    }
+//}
