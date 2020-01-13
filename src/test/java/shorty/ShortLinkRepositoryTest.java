@@ -21,7 +21,7 @@ public class ShortLinkRepositoryTest {
 
     @Test
     public void testFindByHash() {
-        final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptyList());
+        final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptySet());
         repository.save(shortLink);
         List<ShortLink> shortLinks = repository.findByHash("123456789");
 

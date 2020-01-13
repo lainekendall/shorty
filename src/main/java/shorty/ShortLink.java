@@ -8,7 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 public class ShortLink {
@@ -17,7 +17,7 @@ public class ShortLink {
     private String url;
     private String hash;
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> custom = Collections.emptyList();
+    private Set<String> custom;
     @CreationTimestamp
     private LocalDateTime createdAt;
     private Integer visited;
@@ -25,7 +25,7 @@ public class ShortLink {
     protected ShortLink() {
     }
 
-    public ShortLink(final String url, final String hash, final List<String> custom) {
+    public ShortLink(final String url, final String hash, final Set<String> custom) {
         this.url = url;
         this.hash = hash;
         this.custom = custom;
@@ -45,7 +45,7 @@ public class ShortLink {
     public String getHash() {
         return hash;
     }
-    public List<String> getCustom() {
+    public Set<String> getCustom() {
         return custom;
     }
     public LocalDateTime getCreatedAt() {
@@ -64,7 +64,7 @@ public class ShortLink {
         this.hash = hash;
     }
 
-    public void setCustom(List<String> custom) {
+    public void setCustom(Set<String> custom) {
         this.custom = custom;
     }
 

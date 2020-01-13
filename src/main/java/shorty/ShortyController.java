@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -60,20 +62,20 @@ public class ShortyController {
     public String customLink(@RequestParam(value = "url") String url, @RequestParam(value = "custom") String customShorty) {
         List<ShortLink> shortLinks = repository.findByUrl(url);
         if (shortLinks.isEmpty()) {
-            repository.save(new ShortLink(url, null, Collections.singletonList(customShorty)));
-            return "Made a custom url!";
+            repository.save(new ShortLink(url, sanitizeHash(url), Collections.singleton(customShorty)));
+            return "Your new custom link is: " + customShorty;
         }
         final ShortLink shortLink = shortLinks.get(0);
-        final List<String> custom = shortLink.getCustom();
+        final Set<String> custom = shortLink.getCustom();
         custom.add(customShorty);
         shortLink.setCustom(custom);
         repository.save(shortLink);
-        return "Made a custom url!";
+        return "Your new custom link is: " + customShorty;
     }
 
     @RequestMapping("/stats")
-    public String stats(@RequestParam(value = "hash") String hash) {
-        final List<ShortLink> shortLinks = repository.findByHash(hash);
+    public String stats(@RequestParam(value = "url") String url) {
+        final List<ShortLink> shortLinks = repository.findByUrl(url);
         if (shortLinks.isEmpty()) {
             return "This short link hasn't been created yet";
         }
@@ -89,7 +91,7 @@ public class ShortyController {
         return shortLink.getVisited() / now;
     }
 
-    private String createUrl(final String url) {
+    String createUrl(final String url) {
         final String hash = String.valueOf(url.hashCode()).replace("-", "");
         return "http://" + serverHost + ":" + serverPort + "/" + hash;
     }

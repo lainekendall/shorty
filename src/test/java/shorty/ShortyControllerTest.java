@@ -26,6 +26,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -57,20 +61,17 @@ public class ShortyControllerTest {
 
     @Autowired
     private ShortLinkRepository repository;
-    private static ShortLink SHORT_LINK = new ShortLink("url", "1234", Collections.emptyList());
-
-    @Before
-    public void setUp() {
-        repository.save(SHORT_LINK);
-    }
+    private static ShortLink SHORT_LINK = new ShortLink("url", "1234", Collections.emptySet());
 
     @Test
     public void testAll() {
+        repository.save(SHORT_LINK);
         assertThat(controller.all()).extracting(ShortLink::getUrl).containsOnly("url");
     }
 
     @Test
     public void testRedirect() {
+        repository.save(SHORT_LINK);
         assertThat(controller.hashRedirect("1234")).extracting(RedirectView::getUrl).isEqualTo("url");
     }
 
@@ -78,41 +79,30 @@ public class ShortyControllerTest {
     public void testRedirectNull() {
         assertThat(controller.hashRedirect("notASavedHash")).extracting(RedirectView::getUrl).isNull();
     }
+
+    @Test
+    public void testUpsert() {
+        repository.deleteAll();
+        final String shortLinkUrl = controller.createUrl("url");
+        assertThat(controller.create("url")).isEqualTo("<a href=" + shortLinkUrl + " >" + shortLinkUrl + "</a>");
+        assertThat(controller.create("url")).isEqualTo("<a href=" + shortLinkUrl + " >" + shortLinkUrl + "</a>");
+        assertThat(controller.all()).extracting(ShortLink::getUrl).containsOnly("url");
+    }
+
+    @Test
+    public void testCreate() {
+        final String shortLinkUrl = controller.createUrl("newUrl");
+        assertThat(controller.create("newUrl")).isEqualTo("<a href=" + shortLinkUrl + " >" + shortLinkUrl + "</a>");
+    }
+
+    @Test
+    public void testCustom() {
+        assertThat(controller.customLink("url3", "my-custom-link")).isEqualTo("Your new custom link is: my-custom-link");
+        assertThat(repository.findByUrl("url3")).extracting(ShortLink::getCustom).containsOnly(Collections.singleton("my-custom-link"));
+    }
+
+    @Test
+    public void testStats() {
+        assertThat(controller.stats("url")).contains("ShortLink[url='url', hash='1234', custom='[]', createdAt=");
+    }
 }
-//
-//@RunWith(SpringRunner.class)
-//@WebMvcTest(ShortyController.class)
-//public class ShortyControllerTest {
-//
-//    @Autowired private MockMvc mockMvc;
-//
-//
-////    @Autowired
-////    private TestEntityManager entityManager;
-//
-////    private ShortyController controller = new ShortyController();
-//
-//    @Autowired
-//    private ShortLinkRepository repository;
-//
-//    @Before
-//    public void setUp() {
-//    }
-//
-//    @Test
-//    public void testVisitsPerDay() {
-//        final ShortLink shortLink = new ShortLink("https://example.com", "123456789", Collections.emptyList());
-//        shortLink.setCreatedAt(LocalDateTime.of(2020, 1, 1, 3, 37));
-//        final long zeroVisits = ShortyController.visitsPerDay(shortLink);
-//        assertThat(zeroVisits).isGreaterThanOrEqualTo(0L);
-//
-//        shortLink.setVisited(19);
-//        final long someVisits = ShortyController.visitsPerDay(shortLink);
-//        assertThat(someVisits).isLessThanOrEqualTo(3L);
-//    }
-//
-//    @Test
-//    public void testAll() throws Exception {
-//        mockMvc.perform(get("/")).andReturn();
-//    }
-//}
