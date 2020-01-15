@@ -1,13 +1,13 @@
 # Shorty
 Shorty is an API that shortens urls. It does this by String hashing the url and saving this all in an in-memory
 database. The reason I chose an in-memory database over a database like MySql was to reduce complexity and maximize
-developer workflow speed. This API is built on top of [Java Spring](https://spring.io) including Persistence
+developer workflow speed. This API is built on top of [Java Spring](https://spring.io) including Persistence, 
 RestController, and tests.
 
 ## Setup
 ### To run
 In order to run this API locally on your machine run `mvn spring-boot:run` on the command line.
-This will start the app on port `8000` locally. you can then visit https://localhost:8000 to see the
+This will start the app on port `8000` locally. you can then visit http://localhost:8000 to see the
 index page of the api.
 
 ### To test
@@ -21,11 +21,11 @@ This action will create a short link and save it to the in-memory database. Clic
 url.
 
 ### Redirect
-To get redirected to your newly created link, visit localhost:8000/myHash. This will redirect you to your original
+To get redirected to your newly created link, visit http://localhost:8000/myHash. This will redirect you to your original
 url.
 
 ### Custom
-If you would like to enter custom urls to be redirected, you can by visiting localhost:8000/custom?url=google.com&custom=my-custom-link.
+If you would like to enter custom urls to be redirected, you can by visiting http://localhost:8000/custom?url=google.com&custom=my-custom-link.
 
 ## To Do
 Unfortunately because of the roughly 4 hour time constraint on this project, I couldn't complete several things
