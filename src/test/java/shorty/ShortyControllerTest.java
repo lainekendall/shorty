@@ -77,7 +77,7 @@ public class ShortyControllerTest {
 
     @Test
     public void testRedirectNull() {
-        assertThat(controller.hashRedirect("notASavedHash")).extracting(RedirectView::getUrl).isNull();
+        assertThat(controller.hashRedirect("notASavedHash")).extracting(RedirectView::getUrl).isEqualTo("");
     }
 
     @Test

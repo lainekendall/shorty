@@ -39,4 +39,5 @@ url and all of them will get redirected.
 ## Design
 I decided to use [Spring Boot](https://spring.io/projects/spring-boot) in order to get this up and running quickly. Spring Boot is a great
 framework that allows you to run quality apps quickly. The customization is endless but the "Autowiring" of components makes it really
-easy to write a REST API. I'm also familiar with this framework and enjoy working with it a lot.
+easy to write a REST API. I'm also familiar with this framework and enjoy working with it a lot. The database is an in-memory [Hibernate](https://hibernate.org)
+database. This was chosen for ease of use and fast development.

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +34,7 @@ public class ShortyController {
     @RequestMapping(value = "/{hash}")
     public RedirectView hashRedirect(@PathVariable final String hash) {
         List<ShortLink> shorty = repository.findByHash(hash);
-        RedirectView redirectView = new RedirectView();
+        RedirectView redirectView = new RedirectView("");
         if (!shorty.isEmpty()) {
             ShortLink shortLink = shorty.get(0);
             shortLink.setVisited(shortLink.getVisited() + 1);
